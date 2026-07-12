@@ -4,6 +4,14 @@
 <h2>{{ workout.title }}</h2>
 <p class = "text-muted">{{ workout.date }} — {{ workout.duration_minutes }} minuti</p>
 <p>{{ workout.notes }}</p>
+{% if workout.feedbacks.all %}
+    <h5 class = "mt-4">Feedback del coach</h5>
+    <ul class = "list-group mb-3">
+        {% for fb in workout.feedbacks.all %}
+            <li class = "list-group-item">{{ fb.comment }} <span class = "text-muted small">({{ fb.created_at|date:"d/m/Y" }})</span></li>
+        {% endfor %}
+    </ul>
+{% endif %}
 
 <h5 class = "mt-4">Esercizi</h5>
 {% if workout.exercises.all %}
@@ -18,7 +26,11 @@
 {% else %}
     <p class = "text-muted"> Nessun esercizio aggiunto per questo allenamento. </p>
 {% endif %}
-
-<a href = "{% url 'workout_edit' workout.pk %}" class = "btn btn-dark mt-3">Modifica</a>
+{% if is_owner %}
+    <a href = "{% url 'exercise_add' workout.pk %}" class = "btn btn-sm btn-outline-dark mt-2">+ Aggiungi esercizio</a>
+{% endif %}
+{% if is_owner %}
+    <a href = "{% url 'workout_edit' workout.pk %}" class = "btn btn-dark mt-3">Modifica</a>
+{% endif %}
 <a href = "{% url 'workout_list' %}" class = "btn btn-outline-secondary mt-3">Torna alla lista</a>
 {% endblock %}

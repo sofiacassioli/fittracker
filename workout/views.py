@@ -4,14 +4,30 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
 from .models import Workout, Exercise, Goal, CoachAssignment, Feedback
-from .forms import WorkoutForm, GoalForm
+from .forms import WorkoutForm, GoalForm, ExerciseForm
 
 
+@login_required
 @login_required
 def home(request):
     workouts = Workout.objects.filter(user = request.user).order_by('-date')[:5]
     goals = Goal.objects.filter(user = request.user)
-    return render(request, 'workout/home.html', {'workouts': workouts, 'goals': goals})
+    # riepilogo per la home: totale allenamenti e obiettivi raggiunti
+    total_workouts = Workout.objects.filter(user = request.user).count()
+    total_goals = goals.count()
+    achieved_goals = goals.filter(achieved=True).count()
+    if total_goals > 0:
+        goals_percentage = round((achieved_goals / total_goals) * 100)
+    else:
+        goals_percentage = 0
+    return render(request, 'workout/home.html', {
+        'workouts': workouts,
+        'goals': goals,
+        'total_workouts': total_workouts,
+        'total_goals': total_goals,
+        'achieved_goals': achieved_goals,
+        'goals_percentage': goals_percentage,
+    })
 
 class WorkoutListView(LoginRequiredMixin, ListView):
     model = Workout
@@ -37,8 +53,12 @@ def workout_create(request):
 
 @login_required
 def workout_detail(request, pk):
-    workout = get_object_or_404(Workout, pk = pk, user = request.user)
-    return render(request, 'workout/workout_detail.html', {'workout': workout})
+    workout = get_object_or_404(Workout, pk = pk)
+    is_owner = workout.user == request.user
+    is_assigned_coach = CoachAssignment.objects.filter(coach = request.user, athlete = workout.user).exists()
+    if not is_owner and not is_assigned_coach:
+        raise PermissionDenied
+    return render(request, 'workout/workout_detail.html', {'workout': workout, 'is_owner': is_owner})
 
 @login_required
 def workout_edit(request, pk):
@@ -91,6 +111,11 @@ def goal_edit(request, pk):
     return render(request, 'workout/goal_form.html', {'form': form})
 
 @login_required
+def goal_detail(request, pk):
+    goal = get_object_or_404(Goal, pk = pk, user = request.user)
+    return render(request, 'workout/goal_detail.html', {'goal': goal})
+
+@login_required
 def goal_delete(request, pk):
     goal = get_object_or_404(Goal, pk = pk, user = request.user)
     if request.method == 'POST':
@@ -106,7 +131,7 @@ def coach_dashboard(request):
     #Per ogni atleta assegnato al coach, prendo i suoi ultimi allenamenti
     athletes_data = []
     for assignment in assignments:
-        workouts = Workout.objects.filter(user = assignment.athlete).order_by('-date')[:5]
+        workouts = Workout.objects.filter(user = assignment.athlete).order_by('-date')[:5].prefetch_related('feedbacks')
         athletes_data.append({'athlete': assignment.athlete, 'workouts': workouts})
     return render(request, 'workout/coach_dashboard.html', {'athletes_data': athletes_data})
 
@@ -125,3 +150,18 @@ def give_feedback(request, pk):
             Feedback.objects.create(workout = workout, coach = request.user, comment = comment)
         return redirect('coach_dashboard')
     return render(request, 'workout/give_feedback.html', {'workout': workout})
+
+@login_required
+def exercise_add(request, pk):
+    # pk è l'id dell'allenamento a cui aggiungere l'esercizio
+    workout = get_object_or_404(Workout, pk = pk, user = request.user)
+    if request.method == 'POST':
+        form = ExerciseForm(request.POST)
+        if form.is_valid():
+            exercise = form.save(commit = False)
+            exercise.workout = workout
+            exercise.save()
+            return redirect('workout_detail', pk = workout.pk)
+    else:
+        form = ExerciseForm()
+    return render(request, 'workout/exercise_form.html', {'form': form, 'workout': workout})

@@ -10,9 +10,18 @@
             {% if entry.workouts %}
                 <ul class = "list-group list-group-flush">
                     {% for workout in entry.workouts %}
-                        <li class = "list-group-item d-flex justify-content-between">
-                            {{ workout.title }} ({{ workout.date }})
-                            <a href = "{% url 'give_feedback' workout.pk %}" class = "btn btn-sm btn-outline-dark">Lascia feedback</a>
+                        <li class = "list-group-item">
+                            <div class = "d-flex justify-content-between">
+                                <a href = "{% url 'workout_detail' workout.pk %}">{{ workout.title }}</a> ({{ workout.date }})
+                                <a href = "{% url 'give_feedback' workout.pk %}" class = "btn btn-sm btn-outline-dark">Lascia feedback</a>
+                            </div>
+                            {% if workout.feedbacks.all %}
+                                 <ul class = "small text-muted mt-2 mb-0">
+                                    {% for fb in workout.feedbacks.all %}
+                                        <li>{{ fb.comment }} <span class = "text-muted">({{ fb.created_at|date:"d/m/Y" }})</span></li>
+                                    {% endfor %}
+                                </ul>
+                            {% endif %}
                         </li>
                     {% endfor %}
                 </ul>

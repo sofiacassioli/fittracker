@@ -1,0 +1,17 @@
+{% extends 'workout/base.html' %}
+
+{% block content %}
+<h2>{{ goal.title }}</h2>
+{% if goal.target_date %}
+    <p class = "text-muted">Scadenza: {{ goal.target_date }}</p>
+{% endif %}
+{% if goal.achieved %}
+    <span class = "badge bg-success mb-3">Raggiunto ✓</span>
+{% else %}
+    <span class = "badge bg-warning text-dark mb-3">In corso</span>
+{% endif %}
+<p>{{ goal.description }}</p>
+
+<a href = "{% url 'goal_edit' goal.pk %}" class = "btn btn-dark mt-3">Modifica</a>
+<a href = "{% url 'goal_list' %}" class = "btn btn-outline-secondary mt-3">Torna alla lista</a>
+{% endblock %}

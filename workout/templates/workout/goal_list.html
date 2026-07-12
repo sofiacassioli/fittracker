@@ -19,7 +19,7 @@
         <tbody>
             {% for goal in goals %}
                 <tr>
-                    <td>{{ goal.title }}</td>
+                    <td><a href = "{% url 'goal_detail' goal.pk %}">{{ goal.title }}</a></td>
                     <td>{{ goal.target_date|default:"—" }}</td>
                     <td>
                         {% if goal.achieved %}

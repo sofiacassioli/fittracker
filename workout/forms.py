@@ -1,5 +1,5 @@
 from django import forms
-from .models import Workout, Goal
+from .models import Workout, Goal, Exercise
 
 class WorkoutForm(forms.ModelForm):
     class Meta:
@@ -16,3 +16,8 @@ class GoalForm(forms.ModelForm):
         widgets = {
             'target_date': forms.DateInput(attrs = {'type': 'date'}),
         }
+
+class ExerciseForm(forms.ModelForm):
+    class Meta:
+        model = Exercise
+        fields = ['name', 'sets', 'reps', 'weight_kg']

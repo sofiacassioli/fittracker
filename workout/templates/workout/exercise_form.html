@@ -1,7 +1,7 @@
 {% extends 'workout/base.html' %}
 
 {% block content %}
-<h2 class = "mb-4">{% if form.instance.pk %}Modifica allenamento{% else %}Nuovo allenamento{% endif %}</h2>
+<h2 class = "mb-4"> Aggiungi esercizio a "{{ workout.title }}"</h2>
 
 <form method = "post">
     {% csrf_token %}
@@ -14,7 +14,7 @@
             {% endif %}
         </div>
     {% endfor %}
-    <p class = "text-muted small">Nota: dopo aver salvato l'allenamento potrai aggiungere gli esercizi dalla sua pagina.</p>
-    <button type = "submit" class = "btn btn-dark"> Salva </button>
+    <button type = "submit" class = "btn btn-dark">Aggiungi</button>
+    <a href = "{% url 'workout_detail' workout.pk %}" class = "btn btn-outline-secondary">Annulla</a>
 </form>
 {% endblock %}
