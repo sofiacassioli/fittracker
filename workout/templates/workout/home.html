@@ -1,0 +1,61 @@
+{% extends 'workout/base.html' %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h1 class="mb-4">Benvenuto, {{ user.username }}! 💪</h1>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card mb-4">
+            <div class="card-header bg-dark text-white">
+                <h5 class="mb-0">Ultimi allenamenti</h5>
+            </div>
+            <div class="card-body">
+                {% if workouts %}
+                    <ul class="list-group list-group-flush">
+                        {% for workout in workouts %}
+                            <li class="list-group-item d-flex justify-content-between">
+                                <a href="{% url 'workout_detail' workout.pk %}">{{ workout.title }}</a>
+                                <span class="text-muted">{{ workout.date }}</span>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p class="text-muted">Nessun allenamento ancora. <a href="{% url 'workout_create' %}">Aggiungine uno!</a></p>
+                {% endif %}
+                <a href="{% url 'workout_create' %}" class="btn btn-dark mt-3">+ Nuovo allenamento</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card mb-4">
+            <div class="card-header bg-dark text-white">
+                <h5 class="mb-0">I tuoi obiettivi</h5>
+            </div>
+            <div class="card-body">
+                {% if goals %}
+                    <ul class="list-group list-group-flush">
+                        {% for goal in goals %}
+                            <li class="list-group-item d-flex justify-content-between">
+                                {{ goal.title }}
+                                {% if goal.achieved %}
+                                    <span class="badge bg-success">Raggiunto ✓</span>
+                                {% else %}
+                                    <span class="badge bg-warning text-dark">In corso</span>
+                                {% endif %}
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p class="text-muted">Nessun obiettivo ancora. <a href="{% url 'goal_create' %}">Aggiungine uno!</a></p>
+                {% endif %}
+                <a href="{% url 'goal_create' %}" class="btn btn-dark mt-3">+ Nuovo obiettivo</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

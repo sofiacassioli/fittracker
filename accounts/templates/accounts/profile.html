@@ -1,0 +1,9 @@
+{% extends 'workout/base.html' %}
+
+{% block content %}
+<h2 class = "mb-4"> Il mio profilo </h2>
+<p><strong>Username: </strong> {{ user.username }}</p>
+<p><strong>Email: </strong> {{ user.email }}</p>
+<p><strong>Ruolo: </strong> {{ user.get_role_display }}</p>
+{% if user.bio %}<p><strong>Bio:</strong> {{ user.bio }}</p>{% endif %}
+{% endblock %}

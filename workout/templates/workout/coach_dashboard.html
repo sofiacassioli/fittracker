@@ -1,0 +1,27 @@
+{% extends 'workout/base.html' %}
+
+{% block content %}
+<h2 class = "mb-4">Dashboard Coach</h2>
+
+{% for entry in athletes_data %}
+    <div class = "card mb-3">
+        <div class = "card-header bg-dark text-white">{{ entry.athlete.username }}</div>
+        <div class = "card-body">
+            {% if entry.workouts %}
+                <ul class = "list-group list-group-flush">
+                    {% for workout in entry.workouts %}
+                        <li class = "list-group-item d-flex justify-content-between">
+                            {{ workout.title }} ({{ workout.date }})
+                            <a href = "{% url 'give_feedback' workout.pk %}" class = "btn btn-sm btn-outline-dark">Lascia feedback</a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p class = "text-muted">Nessun allenamento registrato.</p>
+            {% endif %}
+        </div>
+    </div>
+{% empty %}
+    <p class = "text-muted">Non hai ancora atleti assegnati.</p>
+{% endfor %}
+{% endblock %}

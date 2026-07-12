@@ -1,0 +1,24 @@
+{% extends 'workout/base.html' %}
+
+{% block content %}
+<h2>{{ workout.title }}</h2>
+<p class = "text-muted">{{ workout.date }} — {{ workout.duration_minutes }} minuti</p>
+<p>{{ workout.notes }}</p>
+
+<h5 class = "mt-4">Esercizi</h5>
+{% if workout.exercises.all %}
+    <ul class = "list-group">
+        {% for exercise in workout.exercises.all %}
+            <li class = "list-group-item">
+                {{ exercise.name }} — {{ exercise.sets }}x{{ exercise.reps }}
+                {% if exercise.weight_kg %} @ {{ exercise.weight_kg }} kg{% endif %}
+            </li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p class = "text-muted"> Nessun esercizio aggiunto per questo allenamento. </p>
+{% endif %}
+
+<a href = "{% url 'workout_edit' workout.pk %}" class = "btn btn-dark mt-3">Modifica</a>
+<a href = "{% url 'workout_list' %}" class = "btn btn-outline-secondary mt-3">Torna alla lista</a>
+{% endblock %}

@@ -1,0 +1,12 @@
+{% extends 'workout/base.html' %}
+
+{% block content %}
+<h2>Confermi l'eliminazione?</h2>
+<p>Stai per eliminare l'obiettivo <strong>{{ goal.title }}</strong>. L'operazione non è reversibile.</p>
+
+<form method = "post">
+    {% csrf_token %}
+    <button type = "submit" class = "btn btn-danger">Sì, elimina</button>
+    <a href = "{% url 'goal_list' %}" class = "btn btn-outline-secondary">Annulla</a>
+</form>
+{% endblock %}
