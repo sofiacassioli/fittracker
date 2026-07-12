@@ -66,7 +66,7 @@
                     <ul class="list-group list-group-flush">
                         {% for goal in goals %}
                             <li class="list-group-item d-flex justify-content-between">
-                                <td><a href = "{% url 'goal_detail' goal.pk %}">{{ goal.title }}</a></td>
+                                <a href = "{% url 'goal_detail' goal.pk %}">{{ goal.title }}</a>
                                 {% if goal.achieved %}
                                     <span class="badge bg-success">Raggiunto ✓</span>
                                 {% else %}

@@ -8,7 +8,6 @@ from .forms import WorkoutForm, GoalForm, ExerciseForm
 
 
 @login_required
-@login_required
 def home(request):
     workouts = Workout.objects.filter(user = request.user).order_by('-date')[:5]
     goals = Goal.objects.filter(user = request.user)
